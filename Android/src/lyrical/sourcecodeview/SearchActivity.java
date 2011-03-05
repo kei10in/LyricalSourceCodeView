@@ -41,6 +41,13 @@ public class SearchActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final ProgressDialog progressDialog = new ProgressDialog(SearchActivity.this);
+                progressDialog.setTitle("取得中");
+                progressDialog.setMessage("ちょっと待ってね！");
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                
                 ListView listView = (ListView) parent;
                 Repositorie repo = (Repositorie) listView.getItemAtPosition(position);
                 ArrayList<String> keyList = new ArrayList<String>();
@@ -66,6 +73,7 @@ public class SearchActivity extends Activity {
                 intent.putExtra("values", valueList.toArray(new String[0]));
                 intent.putExtra("pwd", "");
                 startActivity(intent);
+                progressDialog.dismiss();
             }
         });
     }

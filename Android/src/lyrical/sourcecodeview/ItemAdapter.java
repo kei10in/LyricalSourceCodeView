@@ -40,7 +40,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
             name.setCompoundDrawables(icon, null, null, null);
 
             name.setTypeface(Typeface.DEFAULT_BOLD);
-            name.setText(item.getFileName());
+            name.setText(" " + item.getFileName());
         }
         return view;
     }

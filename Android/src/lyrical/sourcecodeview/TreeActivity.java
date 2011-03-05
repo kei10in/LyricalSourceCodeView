@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -89,6 +90,12 @@ public class TreeActivity extends ListActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final ProgressDialog progressDialog = new ProgressDialog(TreeActivity.this);
+                progressDialog.setTitle("解析中");
+                progressDialog.setMessage("ちょっと待ってね！");
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
                 ListView listView = (ListView) parent;
                 Item item = (Item) listView.getItemAtPosition(position);
                 Intent intent;
@@ -107,6 +114,7 @@ public class TreeActivity extends ListActivity {
                     intent.putExtra("html", html);
                 }
                 startActivity(intent);
+                progressDialog.dismiss();
             }
         });
     }
