@@ -10,13 +10,16 @@ import java.util.Iterator;
 import org.json.JSONObject;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
-
 public class TreeActivity extends ListActivity {
     private String[] mValues;
     private static final String BLOB_ALL_API = "http://github.com/api/v2/json/blob/all/";
@@ -55,6 +58,11 @@ public class TreeActivity extends ListActivity {
                 System.out.println(mValues[position]);
                 String result = request(BLOB_SHOW_API + "kei10in/LyricalSourceCodeView/"
                         + mValues[position]);
+                String html = lyrical.highlighter.Highlighter.buildHtml(result);
+                System.out.println(html);
+                Intent intent = new Intent(TreeActivity.this, ViewerActivity.class);
+                intent.putExtra("html", html);
+                startActivity(intent);
             }
         });
     }
