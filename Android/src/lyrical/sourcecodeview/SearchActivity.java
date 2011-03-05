@@ -11,9 +11,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -67,6 +71,32 @@ public class SearchActivity extends Activity {
     }
 
     public void onSearch(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("検索中");
+        progressDialog.setMessage("ちょっと待ってね！");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                searchTask();
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                progressDialog.dismiss();
+                adapter.notifyDataSetChanged();
+
+            }
+        }.execute();
+
+    }
+
+    private void searchTask() {
         EditText editText = (EditText) findViewById(R.id.searchEditText);
         String result = request(SEARCH_API + editText.getText().toString());
 
@@ -85,7 +115,6 @@ public class SearchActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        adapter.notifyDataSetChanged();
     }
 
     private String request(String api) {
