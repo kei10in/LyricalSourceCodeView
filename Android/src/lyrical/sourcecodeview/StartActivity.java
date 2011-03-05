@@ -10,6 +10,9 @@ public class StartActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        IconCache iconCache = IconCache.getInstance();
+        iconCache.setDir(getResources().getDrawable(R.drawable.dir));
+        iconCache.setFile(getResources().getDrawable(R.drawable.file));
         startActivity(new Intent(this, SearchActivity.class));
         //startActivity(new Intent(this, TreeActivity.class));
     }

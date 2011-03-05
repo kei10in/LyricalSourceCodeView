@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,15 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         Item item = (Item) mItems.get(position);
         if (null != item) {
             TextView name = (TextView) view.findViewById(android.R.id.text1);
+            Drawable icon;
+            if (null == item.getHash() || 0 == item.getHash().length()) {
+                icon = IconCache.getInstance().getDir();
+            } else {
+                icon = IconCache.getInstance().getFile();
+            }
+            icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+            name.setCompoundDrawables(icon, null, null, null);
+
             name.setTypeface(Typeface.DEFAULT_BOLD);
             name.setText(item.getFileName());
         }
