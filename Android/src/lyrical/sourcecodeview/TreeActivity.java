@@ -33,6 +33,7 @@ public class TreeActivity extends ListActivity {
         mKeys = extras.getStringArray("keys");
         mValues = extras.getStringArray("values");
         mPwd = extras.getString("pwd");
+        setTitle("/" + mPwd);
         mItemList = new ArrayList<Item>();
         ArrayList<String> added = new ArrayList<String>();
         if (null == mPwd || 0 == mPwd.length()) {
