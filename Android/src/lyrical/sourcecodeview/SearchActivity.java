@@ -2,20 +2,21 @@ package lyrical.sourcecodeview;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class SearchActivity extends Activity {
+    private static final String SEARCH_API = "http://github.com/api/v2/json/repos/search/";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,32 +24,41 @@ public class SearchActivity extends Activity {
     }
 
     public void onSearch(View view) {
-        EditText editText = (EditText)findViewById(R.id.searchEditText);
-        doSearchApi(editText.getText().toString());
+        EditText editText = (EditText) findViewById(R.id.searchEditText);
+        String result = doSearchApi(editText.getText().toString());
+        
+        try{
+        JSONObject json = new JSONObject(result);
+        JSONArray jsons = (JSONArray)json.get("repositories");
+        for (int i = 0; i < jsons.length(); i++) {
+            JSONObject jsonObj = jsons.getJSONObject(i);
+            System.out.println(jsonObj.getString("name"));
+            System.out.println(jsonObj.getString("url"));
+            System.out.println(jsonObj.getString("language"));
+            System.out.println(jsonObj.getString("description"));
+        }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public String doSearchApi(String word) {
-        String urlString = "http://github.com/api/v2/json/repos/search/" + word;
+        StringBuffer sb = new StringBuffer();
         try {
-            URL url = new URL(urlString);
-            URLConnection uc = url.openConnection();
-            InputStream is = uc.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            URL url = new URL(SEARCH_API + word);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection()
+                    .getInputStream()));
             String s;
-            StringBuffer sb = new StringBuffer();
             // 一行でJSONが返ってくるので冗長？
             while ((s = reader.readLine()) != null) {
-                System.out.println(s);
+//                System.out.println(s);
+                sb.append(s);
             }
             reader.close();
-        } catch (MalformedURLException e) {
-            System.err.println("Invalid URL format: " + urlString);
-            System.exit(-1);
         } catch (IOException e) {
-            System.err.println("Can't connect to " + urlString);
-            System.exit(0);
+            Toast.makeText(this, "GitHubに接続できませんでした", Toast.LENGTH_SHORT);
         }
-        
-        return null;
+
+        return sb.toString();
     }
 }
