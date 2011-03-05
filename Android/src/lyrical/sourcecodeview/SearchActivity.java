@@ -32,7 +32,7 @@ public class SearchActivity extends Activity {
 
     public void onSearch(View view) {
         EditText editText = (EditText) findViewById(R.id.searchEditText);
-        String result = doSearchApi(editText.getText().toString());
+        String result = executeSearchApi(editText.getText().toString());
 
         try {
             mRepositorieList.clear();
@@ -52,7 +52,7 @@ public class SearchActivity extends Activity {
         adapter.notifyDataSetChanged();
     }
 
-    public String doSearchApi(String word) {
+    public String executeSearchApi(String word) {
         StringBuffer sb = new StringBuffer();
         try {
             URL url = new URL(SEARCH_API + word);
