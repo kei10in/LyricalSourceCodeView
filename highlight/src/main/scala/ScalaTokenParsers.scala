@@ -2,9 +2,9 @@ package lyrical.highlighter
 
 import scala.util.parsing.combinator._
 
-// ¤³¤ì¤¬scala¤ÎParser Combinator
+// ã“ã‚ŒãŒscalaã®Parser Combinator
 object ScalaTokenParsers extends RegexParsers {
-  // RegexParsers¤¬¶õÇò¤òÌµ»ë¤·¤Æ¤¯¤ì¤ë¤Î¤¬µÕ¤Ë¼ÙËâ
+  // RegexParsersãŒç©ºç™½ã‚’ç„¡è¦–ã—ã¦ãã‚Œã‚‹ã®ãŒé€†ã«é‚ªé­”
   override def skipWhitespace = false
 
   val eof = "".r
