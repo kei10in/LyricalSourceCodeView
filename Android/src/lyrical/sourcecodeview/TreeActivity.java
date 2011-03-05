@@ -12,13 +12,10 @@ import org.json.JSONObject;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 public class TreeActivity extends ListActivity {
     private String[] mValues;
@@ -55,11 +52,9 @@ public class TreeActivity extends ListActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println(mValues[position]);
                 String result = request(BLOB_SHOW_API + "kei10in/LyricalSourceCodeView/"
                         + mValues[position]);
                 String html = lyrical.highlighter.Highlighter.buildHtml(result);
-                System.out.println(html);
                 Intent intent = new Intent(TreeActivity.this, ViewerActivity.class);
                 intent.putExtra("html", html);
                 startActivity(intent);
@@ -68,6 +63,7 @@ public class TreeActivity extends ListActivity {
     }
 
     private String request(String api) {
+        System.out.println(api);
         StringBuffer sb = new StringBuffer();
         try {
             URL url = new URL(api);
@@ -76,7 +72,6 @@ public class TreeActivity extends ListActivity {
             String s;
             // 一行でJSONが返ってくるので冗長？
             while ((s = reader.readLine()) != null) {
-                System.out.println(s);
                 sb.append(s);
             }
             reader.close();
@@ -86,5 +81,4 @@ public class TreeActivity extends ListActivity {
 
         return sb.toString();
     }
-
 }

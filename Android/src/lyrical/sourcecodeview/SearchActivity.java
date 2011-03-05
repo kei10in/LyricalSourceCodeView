@@ -19,7 +19,7 @@ import android.widget.Toast;
 public class SearchActivity extends Activity {
     private static final String SEARCH_API = "http://github.com/api/v2/json/repos/search/";
     private ArrayList<Repositorie> mRepositorieList;
-    RepositorieAdapter adapter;
+    private RepositorieAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,6 @@ public class SearchActivity extends Activity {
             String s;
             // 一行でJSONが返ってくるので冗長？
             while ((s = reader.readLine()) != null) {
-                System.out.println(s);
                 sb.append(s);
             }
             reader.close();
