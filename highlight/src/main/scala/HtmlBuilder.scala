@@ -3,7 +3,7 @@ package lyrical.highlighter
 trait HtmlBuilder { this : CssBuilder with BodyBuilder =>
   def css: String
   def body : String
-  def build = "<html><head><style type='text/css'>"+css+"</style></head><body>"+body.replace("\n", "<br/>") + "</body></html>"
+  def build = "<html><head><style type='text/css'>"+css+"</style></head><body><pre>"+ body+ "</pre></body></html>"
 }
 
 trait CssBuilder{
