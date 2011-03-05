@@ -5,64 +5,83 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class TreeActivity extends ListActivity {
     private String[] mValues;
-    private static final String BLOB_ALL_API = "http://github.com/api/v2/json/blob/all/";
+    private String[] mKeys;
+
     private static final String BLOB_SHOW_API = "http://github.com/api/v2/json/blob/show/";
-    private static final String BRANCHE = "master";
     private String mName;
     private String mOwner;
+    private String mPwd;
+    private ArrayList<Item> mItemList;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         mName = extras.getString("name");
         mOwner = extras.getString("owner");
-
-        String result = request(BLOB_ALL_API + mName + "/" + mOwner + "/" + BRANCHE);
-
-        ArrayList<String> keyList = new ArrayList<String>();
-        ArrayList<String> valueList = new ArrayList<String>();
-        try {
-            JSONObject json = new JSONObject(result);
-            json = json.getJSONObject("blobs");
-            Iterator<?> it = json.keys();
-            while (it.hasNext()) {
-                String key = (String) it.next();
-                keyList.add(key);
-                valueList.add(json.getString(key));
+        mKeys = extras.getStringArray("keys");
+        mValues = extras.getStringArray("values");
+        mPwd = extras.getString("pwd");
+        mItemList = new ArrayList<Item>();
+        ArrayList<String> added = new ArrayList<String>();
+        if (null == mPwd || 0 == mPwd.length()) {
+            for (int i = 0, range = mKeys.length; i < range; i++) {
+                String str = mKeys[i];
+                int separatePoint = str.indexOf("/");
+                String fileName;
+                String hash = null;
+                if (-1 == separatePoint) {
+                    fileName = str;
+                    hash = mValues[i];
+                } else {
+                    fileName = str.substring(0, separatePoint);
+                }
+                if (-1 == added.indexOf(fileName)) {
+                    Item item = new Item();
+                    item.setFileName(fileName);
+                    item.setHash(hash);
+                    mItemList.add(item);
+                    added.add(fileName);
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("+" + mPwd.length());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, keyList.toArray(new String[0]));
-        mValues = valueList.toArray(new String[0]);
+        ItemAdapter adapter = new ItemAdapter(this, android.R.layout.simple_list_item_1, mItemList);
         setListAdapter(adapter);
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String result = request(BLOB_SHOW_API + mName + "/" + mOwner + "/"
-                        + mValues[position]);
-                String html = lyrical.highlighter.Highlighter.buildHtml(result);
-                Intent intent = new Intent(TreeActivity.this, ViewerActivity.class);
-                intent.putExtra("html", html);
+                ListView listView = (ListView) parent;
+                Item item = (Item) listView.getItemAtPosition(position);
+                Intent intent;
+                if (null == item.getHash()) {
+                    intent = new Intent(TreeActivity.this, TreeActivity.class);
+                    intent.putExtra("pwd", mPwd + item.getFileName() + "/");
+                    intent.putExtra("name", mName);
+                    intent.putExtra("owner", mOwner);
+                    intent.putExtra("keys", mKeys);
+                    intent.putExtra("values", mValues);
+                } else {
+                    String result = request(BLOB_SHOW_API + mOwner + "/" + mName + "/"
+                            + mValues[position]);
+                    String html = lyrical.highlighter.Highlighter.buildHtml(result);
+                    intent = new Intent(TreeActivity.this, ViewerActivity.class);
+                    intent.putExtra("html", html);
+                }
                 startActivity(intent);
             }
         });

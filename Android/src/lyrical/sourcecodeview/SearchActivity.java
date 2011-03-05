@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,6 +20,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class SearchActivity extends Activity {
+    private static final String BRANCHE = "master";
+    private static final String BLOB_ALL_API = "http://github.com/api/v2/json/blob/all/";
     private static final String SEARCH_API = "http://github.com/api/v2/json/repos/search/";
     private ArrayList<Repositorie> mRepositorieList;
     private RepositorieAdapter adapter;
@@ -36,9 +39,28 @@ public class SearchActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ListView listView = (ListView) parent;
                 Repositorie repo = (Repositorie) listView.getItemAtPosition(position);
+                ArrayList<String> keyList = new ArrayList<String>();
+                ArrayList<String> valueList = new ArrayList<String>();
+                try {
+                    String result = request(BLOB_ALL_API + repo.getOwner() + "/" + repo.getName()
+                            + "/" + BRANCHE);
+                    JSONObject json = new JSONObject(result);
+                    json = json.getJSONObject("blobs");
+                    Iterator<?> it = json.keys();
+                    while (it.hasNext()) {
+                        String key = (String) it.next();
+                        keyList.add(key);
+                        valueList.add(json.getString(key));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Intent intent = new Intent(SearchActivity.this, TreeActivity.class);
                 intent.putExtra("name", repo.getName());
                 intent.putExtra("owner", repo.getOwner());
+                intent.putExtra("keys", keyList.toArray(new String[0]));
+                intent.putExtra("values", valueList.toArray(new String[0]));
+                intent.putExtra("pwd", "");
                 startActivity(intent);
             }
         });
@@ -46,7 +68,7 @@ public class SearchActivity extends Activity {
 
     public void onSearch(View view) {
         EditText editText = (EditText) findViewById(R.id.searchEditText);
-        String result = executeSearchApi(editText.getText().toString());
+        String result = request(SEARCH_API + editText.getText().toString());
 
         try {
             mRepositorieList.clear();
@@ -66,10 +88,11 @@ public class SearchActivity extends Activity {
         adapter.notifyDataSetChanged();
     }
 
-    public String executeSearchApi(String word) {
+    private String request(String api) {
+        System.out.println(api);
         StringBuffer sb = new StringBuffer();
         try {
-            URL url = new URL(SEARCH_API + word);
+            URL url = new URL(api);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection()
                     .getInputStream()));
             String s;
@@ -81,6 +104,7 @@ public class SearchActivity extends Activity {
         } catch (IOException e) {
             Toast.makeText(this, "GitHubに接続できませんでした", Toast.LENGTH_SHORT);
         }
+
         return sb.toString();
     }
 }
