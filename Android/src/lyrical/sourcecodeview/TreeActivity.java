@@ -55,6 +55,30 @@ public class TreeActivity extends ListActivity {
                 }
             }
         } else {
+            for (int i = 0, range = mKeys.length; i < range; i++) {
+                String str = mKeys[i];
+                if (!str.startsWith(mPwd)) {
+                    continue;
+                }
+                str = str.replaceFirst(mPwd, "");
+                int separatePoint = str.indexOf("/");
+                String fileName;
+                String hash = null;
+                if (-1 == separatePoint) {
+                    fileName = str;
+                    hash = mValues[i];
+                } else {
+                    fileName = str.substring(0, separatePoint);
+                }
+                if (-1 == added.indexOf(fileName)) {
+                    Item item = new Item();
+                    item.setFileName(fileName);
+                    item.setHash(hash);
+                    mItemList.add(item);
+                    added.add(fileName);
+                }
+            }
+
             System.out.println("+" + mPwd.length());
         }
 
