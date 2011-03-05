@@ -106,7 +106,11 @@ public class SearchActivity extends Activity {
 
     private void searchTask() {
         EditText editText = (EditText) findViewById(R.id.searchEditText);
-        String result = request(SEARCH_API + editText.getText().toString());
+        String word = editText.getText().toString();
+        if(0 == word.length()){
+            return;
+        }
+        String result = request(SEARCH_API + word);
 
         try {
             mRepositorieList.clear();
