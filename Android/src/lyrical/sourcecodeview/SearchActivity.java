@@ -10,8 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -27,7 +29,19 @@ public class SearchActivity extends Activity {
         setContentView(R.layout.activity_search);
         mRepositorieList = new ArrayList<Repositorie>();
         adapter = new RepositorieAdapter(this, R.layout.repositorie_row, mRepositorieList);
-        ((ListView)findViewById(R.id.repositorieListView)).setAdapter(adapter);
+        ListView listView = (ListView) findViewById(R.id.repositorieListView);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ListView listView = (ListView) parent;
+                Repositorie repo = (Repositorie) listView.getItemAtPosition(position);
+                Intent intent = new Intent(SearchActivity.this, TreeActivity.class);
+                intent.putExtra("name", repo.getName());
+                intent.putExtra("owner", repo.getOwner());
+                startActivity(intent);
+            }
+        });
     }
 
     public void onSearch(View view) {

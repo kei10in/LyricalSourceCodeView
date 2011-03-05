@@ -10,7 +10,7 @@ public class StartActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        //startActivity(new Intent(this, SearchActivity.class));
-        startActivity(new Intent(this, TreeActivity.class));
+        startActivity(new Intent(this, SearchActivity.class));
+        //startActivity(new Intent(this, TreeActivity.class));
     }
 }

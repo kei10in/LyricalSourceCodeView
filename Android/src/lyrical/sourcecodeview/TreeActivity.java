@@ -17,16 +17,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
 public class TreeActivity extends ListActivity {
     private String[] mValues;
     private static final String BLOB_ALL_API = "http://github.com/api/v2/json/blob/all/";
     private static final String BLOB_SHOW_API = "http://github.com/api/v2/json/blob/show/";
     private static final String BRANCHE = "master";
+    private String mName;
+    private String mOwner;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        mName = extras.getString("name");
+        mOwner = extras.getString("owner");
 
-        String result = request(BLOB_ALL_API + "kei10in/LyricalSourceCodeView" + "/" + BRANCHE);
+        String result = request(BLOB_ALL_API + mName + "/" + mOwner + "/" + BRANCHE);
 
         ArrayList<String> keyList = new ArrayList<String>();
         ArrayList<String> valueList = new ArrayList<String>();
@@ -52,7 +58,7 @@ public class TreeActivity extends ListActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String result = request(BLOB_SHOW_API + "kei10in/LyricalSourceCodeView/"
+                String result = request(BLOB_SHOW_API + mName + "/" + mOwner + "/"
                         + mValues[position]);
                 String html = lyrical.highlighter.Highlighter.buildHtml(result);
                 Intent intent = new Intent(TreeActivity.this, ViewerActivity.class);
