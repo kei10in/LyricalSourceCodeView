@@ -6,10 +6,10 @@
         android:layout_height="wrap_content" android:layout_width="fill_parent">
         <EditText android:id="@+id/searchEditText"
             android:layout_weight="1" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" android:singleLine="true"/>
         <Button android:text="@string/search" android:id="@+id/searchButton"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:onClick="onSearch" />
+            android:onClick="onSearch" android:drawableLeft="@drawable/search" />
     </LinearLayout>
     <ListView android:id="@+id/repositorieListView"
         android:layout_height="fill_parent" android:layout_width="fill_parent" />
