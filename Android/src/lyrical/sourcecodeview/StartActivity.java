@@ -14,6 +14,6 @@ public class StartActivity extends Activity {
         iconCache.setDir(getResources().getDrawable(R.drawable.dir));
         iconCache.setFile(getResources().getDrawable(R.drawable.file));
         startActivity(new Intent(this, SearchActivity.class));
-        //startActivity(new Intent(this, TreeActivity.class));
+        finish();
     }
 }
