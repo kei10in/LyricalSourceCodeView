@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -90,32 +91,43 @@ public class TreeActivity extends ListActivity {
         lv.setTextFilterEnabled(true);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final ProgressDialog progressDialog = new ProgressDialog(TreeActivity.this);
-                progressDialog.setTitle("解析中");
-                progressDialog.setMessage("ちょっと待ってね！");
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 ListView listView = (ListView) parent;
                 Item item = (Item) listView.getItemAtPosition(position);
-                Intent intent;
+                final Intent intent = new Intent();
+                ;
                 if (null == item.getHash()) {
-                    intent = new Intent(TreeActivity.this, TreeActivity.class);
+                    intent.setClass(TreeActivity.this, TreeActivity.class);
                     intent.putExtra("pwd", mPwd + item.getFileName() + "/");
                     intent.putExtra("name", mName);
                     intent.putExtra("owner", mOwner);
                     intent.putExtra("keys", mKeys);
                     intent.putExtra("values", mValues);
+                    startActivity(intent);
                 } else {
-                    String result = request(BLOB_SHOW_API + mOwner + "/" + mName + "/"
-                            + mValues[position]);
-                    String html = lyrical.highlighter.Highlighter.buildHtml(result);
-                    intent = new Intent(TreeActivity.this, ViewerActivity.class);
-                    intent.putExtra("html", html);
+                    final ProgressDialog progressDialog = new ProgressDialog(TreeActivity.this);
+                    progressDialog.setTitle("解析中");
+                    progressDialog.setMessage("ちょっと待ってね！");
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    new AsyncTask<Void, Void, String>() {
+                        @Override
+                        protected String doInBackground(Void... params) {
+                            String result = request(BLOB_SHOW_API + mOwner + "/" + mName + "/"
+                                    + mValues[position]);
+                            return lyrical.highlighter.Highlighter.buildHtml(result);
+                        }
+
+                        @Override
+                        protected void onPostExecute(String result) {
+                            progressDialog.dismiss();
+                            intent.setClass(TreeActivity.this, ViewerActivity.class);
+                            intent.putExtra("html", result);
+                            startActivity(intent);
+                        }
+                    }.execute();
                 }
-                startActivity(intent);
-                progressDialog.dismiss();
             }
         });
     }
