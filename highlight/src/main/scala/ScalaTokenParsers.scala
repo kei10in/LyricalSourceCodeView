@@ -20,12 +20,11 @@ object ScalaTokenParsers extends RegexParsers {
 
   val lineComment = "//.*\n".r
   def lineCommentParser: Parser[String] = lineComment ^^ {
-    case x => "<span class=\"comment\">" + x.takeWhile(_ != '\n') + "</span><br>"
+    case x => "<span class=\"comment\">" + x.takeWhile(_ != '\n').mkString + "</span><br>"
   }
 
   val blockComment = """/\*.*?\*/""".r
   def blockCommentParser: Parser[String] = blockComment ^^ {
     case x => "<span class=\"comment\">" + x.replace("\n", "<br>") + "</span>"
   }
-  
 }
