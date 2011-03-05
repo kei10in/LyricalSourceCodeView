@@ -20,6 +20,7 @@ import android.widget.Toast;
 public class TreeActivity extends ListActivity {
     private String[] mValues;
     private static final String BLOB_ALL_API = "http://github.com/api/v2/json/blob/all/";
+    private static final String BLOB_SHOW_API = "http://github.com/api/v2/json/blob/show/";
     private static final String BRANCHE = "master";
 
     public void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class TreeActivity extends ListActivity {
             json = json.getJSONObject("blobs");
             Iterator<?> it = json.keys();
             while (it.hasNext()) {
-                String key = (String)it.next();
+                String key = (String) it.next();
                 keyList.add(key);
                 valueList.add(json.getString(key));
             }
@@ -42,19 +43,20 @@ public class TreeActivity extends ListActivity {
             e.printStackTrace();
         }
 
-         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-         android.R.layout.simple_list_item_1, keyList.toArray(new String[0]));
-         mValues = valueList.toArray(new String[0]);
-         setListAdapter(adapter);
-         ListView lv = getListView();
-         lv.setTextFilterEnabled(true);
-         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-             @Override
-             public void onItemClick(AdapterView<?> parent, View view,
-                     int position, long id) {
-                 System.out.println(mValues[position]);
-             }
-         });
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, keyList.toArray(new String[0]));
+        mValues = valueList.toArray(new String[0]);
+        setListAdapter(adapter);
+        ListView lv = getListView();
+        lv.setTextFilterEnabled(true);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(mValues[position]);
+                String result = request(BLOB_SHOW_API + "kei10in/LyricalSourceCodeView/"
+                        + mValues[position]);
+            }
+        });
     }
 
     private String request(String api) {
