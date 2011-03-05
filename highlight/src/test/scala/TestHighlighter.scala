@@ -31,5 +31,40 @@ Hello, World!"""
       ))
   }
 
+
+  test("keyword, def parsing") {
+    val input = """def foo {
+}
+"""
+    val expected = """<span class="keyword">def</span> foo {
+}
+"""
+      assert(expected === Highlighter.highlight(input))
+  }
+
+
+  test("keyword, object parsing") {
+    val input = """object foo {
+}
+"""
+    val expected = """<span class="keyword">object</span> foo {
+}
+"""
+      assert(expected === Highlighter.highlight(input))
+  }
+
+
+  test("keyword, class parsing") {
+    val input = """class foo {
+}
+"""
+    val expected = """<span class="keyword">class</span> foo {
+}
+"""
+      assert(expected === Highlighter.highlight(input))
+  }
+
+
+
 }
 
