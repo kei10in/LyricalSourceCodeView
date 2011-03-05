@@ -36,4 +36,21 @@ object ScalaTokenParsers extends RegexParsers {
     x => """<span class="keyword">""" + x + "</span>"
   }
 
+  def stringLiteralParser =  (multiLineStringLiteral | singleLineStringLiteral) ^^ {
+    x => """<span class="string">""" + x + "</span>"
+  }
+  def singleLineStringLiteral = '"' ~ rep(stringElement) ~ '"' ^^ {
+    case q1 ~ xs ~ q2 => q1 + xs.mkString + q2
+  }
+  def multiLineStringLiteral = "\"\"\"" ~ multiLineChars ^^ {
+    case q1 ~ s => q1 + s
+  }
+
+  def stringElement = printableCharNoDoubleQuote | charEscapeSeq
+  def printableCharNoDoubleQuote = """[^\a\t\n\v\f\r\e""]""".r
+  def charEscapeSeq = """\[a-zA-Z""]""".r
+  def multiLineChars: Parser[String] = "\"\"\"" | ".".r ~ multiLineChars ^^ {
+    case s ~ t => s + t
+  }
+
 }
