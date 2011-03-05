@@ -1,6 +1,7 @@
 package lyrical.sourcecodeview;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 public class StartActivity extends Activity {
@@ -9,5 +10,6 @@ public class StartActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        startActivity(new Intent(this, SearchActivity.class));
     }
 }
