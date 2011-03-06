@@ -1,9 +1,5 @@
 package lyrical.sourcecodeview;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -21,7 +17,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class SearchActivity extends Activity {
     private static final String BRANCHE = "master";
@@ -47,14 +42,14 @@ public class SearchActivity extends Activity {
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-                
+
                 ListView listView = (ListView) parent;
                 Repositorie repo = (Repositorie) listView.getItemAtPosition(position);
                 ArrayList<String> keyList = new ArrayList<String>();
                 ArrayList<String> valueList = new ArrayList<String>();
                 try {
-                    String result = request(BLOB_ALL_API + repo.getOwner() + "/" + repo.getName()
-                            + "/" + BRANCHE);
+                    String result = HttpClient.request(BLOB_ALL_API + repo.getOwner() + "/"
+                            + repo.getName() + "/" + BRANCHE, SearchActivity.this);
                     JSONObject json = new JSONObject(result);
                     json = json.getJSONObject("blobs");
                     Iterator<?> it = json.keys();
@@ -107,10 +102,10 @@ public class SearchActivity extends Activity {
     private void searchTask() {
         EditText editText = (EditText) findViewById(R.id.searchEditText);
         String word = editText.getText().toString();
-        if(0 == word.length()){
+        if (0 == word.length()) {
             return;
         }
-        String result = request(SEARCH_API + word);
+        String result = HttpClient.request(SEARCH_API + word, this);
 
         try {
             mRepositorieList.clear();
@@ -127,25 +122,5 @@ public class SearchActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private String request(String api) {
-        System.out.println(api);
-        StringBuffer sb = new StringBuffer();
-        try {
-            URL url = new URL(api);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection()
-                    .getInputStream()));
-            String s;
-            // 一行でJSONが返ってくるので冗長？
-            while ((s = reader.readLine()) != null) {
-                sb.append(s);
-            }
-            reader.close();
-        } catch (IOException e) {
-            Toast.makeText(this, "GitHubに接続できませんでした", Toast.LENGTH_SHORT);
-        }
-
-        return sb.toString();
     }
 }
