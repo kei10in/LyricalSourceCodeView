@@ -116,7 +116,9 @@ public class TreeActivity extends ListActivity {
                         protected String doInBackground(Void... params) {
                             String result = request(BLOB_SHOW_API + mOwner + "/" + mName + "/"
                                     + mValues[position]);
-                            return lyrical.highlighter.Highlighter.buildHtml(result);
+                            String html = lyrical.highlighter.Highlighter.buildHtml(result);
+                            System.out.println(html);
+                            return html;
                         }
 
                         @Override
@@ -140,9 +142,8 @@ public class TreeActivity extends ListActivity {
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection()
                     .getInputStream()));
             String s;
-            // 一行でJSONが返ってくるので冗長？
             while ((s = reader.readLine()) != null) {
-                sb.append(s);
+                sb.append(s + "\n");
             }
             reader.close();
         } catch (IOException e) {
