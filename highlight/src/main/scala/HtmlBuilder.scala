@@ -18,5 +18,7 @@ trait BodyBuilder{
 trait NormalCssBuilder extends CssBuilder{
   override def css: String = """
 span.comment { color : #999999 } 
+span.keyword { color : #0033FF } 
+span.string  { color : #00AA33 } 
   """
 }
