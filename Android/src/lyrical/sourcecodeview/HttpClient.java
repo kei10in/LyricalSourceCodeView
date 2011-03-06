@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 
 import android.app.Activity;
 import android.widget.Toast;
@@ -14,7 +15,9 @@ public class HttpClient {
         StringBuffer sb = new StringBuffer();
         try {
             URL url = new URL(api);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openConnection()
+            URLConnection urlConnection = url.openConnection();
+            urlConnection.setConnectTimeout(0);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection
                     .getInputStream()));
             String s;
             while ((s = reader.readLine()) != null) {
@@ -22,7 +25,7 @@ public class HttpClient {
             }
             reader.close();
         } catch (IOException e) {
-            Toast.makeText(activity, "GitHubに接続できませんでした", Toast.LENGTH_SHORT);
+            Toast.makeText(activity, "GitHubに接続できませんでした", Toast.LENGTH_SHORT).show();
         }
 
         return sb.toString();
