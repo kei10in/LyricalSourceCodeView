@@ -3,7 +3,6 @@ package lyrical.sourcecodeview;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -82,12 +81,7 @@ public class TreeActivity extends ListActivity {
                     intent.putExtra("values", mValues);
                     startActivity(intent);
                 } else {
-                    final ProgressDialog progressDialog = new ProgressDialog(TreeActivity.this);
-                    progressDialog.setTitle("解析中");
-                    progressDialog.setMessage("ちょっと待ってね！");
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    progressDialog.setCancelable(false);
-                    progressDialog.show();
+                    final WaitDialog waitDialog = new WaitDialog(TreeActivity.this, "解析中", "ちょっと待ってね！");
                     new AsyncTask<Void, Void, String>() {
                         @Override
                         protected String doInBackground(Void... params) {
@@ -100,7 +94,7 @@ public class TreeActivity extends ListActivity {
 
                         @Override
                         protected void onPostExecute(String result) {
-                            progressDialog.dismiss();
+                            waitDialog.dismiss();
                             intent.setClass(TreeActivity.this, ViewerActivity.class);
                             intent.putExtra("html", result);
                             startActivity(intent);

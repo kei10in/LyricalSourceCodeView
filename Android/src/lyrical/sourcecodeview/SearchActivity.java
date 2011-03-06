@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -36,12 +35,7 @@ public class SearchActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final ProgressDialog progressDialog = new ProgressDialog(SearchActivity.this);
-                progressDialog.setTitle("取得中");
-                progressDialog.setMessage("ちょっと待ってね！");
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+                final WaitDialog waitDialog = new WaitDialog(SearchActivity.this, "取得中", "ちょっと待ってね！");
 
                 ListView listView = (ListView) parent;
                 Repositorie repo = (Repositorie) listView.getItemAtPosition(position);
@@ -68,7 +62,7 @@ public class SearchActivity extends Activity {
                 intent.putExtra("values", valueList.toArray(new String[0]));
                 intent.putExtra("pwd", "");
                 startActivity(intent);
-                progressDialog.dismiss();
+                waitDialog.dismiss();
             }
         });
     }
@@ -76,12 +70,7 @@ public class SearchActivity extends Activity {
     public void onSearch(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("検索中");
-        progressDialog.setMessage("ちょっと待ってね！");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        final WaitDialog waitDialog = new WaitDialog(this, "検索中", "ちょっと待ってね！");
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -91,9 +80,8 @@ public class SearchActivity extends Activity {
 
             @Override
             protected void onPostExecute(Boolean result) {
-                progressDialog.dismiss();
+                waitDialog.dismiss();
                 adapter.notifyDataSetChanged();
-
             }
         }.execute();
 
