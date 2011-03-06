@@ -28,11 +28,21 @@ object ScalaTokenParsers extends RegexParsers {
     x => "<span class=\"comment\">" + x + "</span>"
   }
 
+  val importKeyword = "import"
+  val packageKeyword = "package"
   val defKeyword = "def"
   val objectKeyword = "object"
   val classKeyword = "class"
+  val traitKeyword = "trait"
 
-  def keywordParser: Parser[String] = (defKeyword | objectKeyword | classKeyword) ^^ {
+  def keywordParser: Parser[String] = (
+    importKeyword |
+    packageKeyword |
+    defKeyword |
+    objectKeyword |
+    classKeyword |
+    traitKeyword
+  ) ^^ {
     x => """<span class="keyword">""" + x + "</span>"
   }
 
