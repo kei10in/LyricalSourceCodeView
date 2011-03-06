@@ -32,53 +32,35 @@ public class TreeActivity extends ListActivity {
         setTitle("/" + mPwd);
         mItemList = new ArrayList<Item>();
         ArrayList<String> added = new ArrayList<String>();
-        if (null == mPwd || 0 == mPwd.length()) {
-            for (int i = 0, range = mKeys.length; i < range; i++) {
-                String str = mKeys[i];
-                int separatePoint = str.indexOf("/");
-                String fileName;
-                String hash = null;
-                if (-1 == separatePoint) {
-                    fileName = str;
-                    hash = mValues[i];
-                } else {
-                    fileName = str.substring(0, separatePoint);
-                }
-                if (-1 == added.indexOf(fileName)) {
-                    Item item = new Item();
-                    item.setFileName(fileName);
-                    item.setHash(hash);
-                    mItemList.add(item);
-                    added.add(fileName);
-                }
-            }
-        } else {
-            for (int i = 0, range = mKeys.length; i < range; i++) {
-                String str = mKeys[i];
+
+        for (int i = 0, range = mKeys.length; i < range; i++) {
+            String str = mKeys[i];
+            if (null == mPwd || 0 == mPwd.length()) {
+            } else {
                 if (!str.startsWith(mPwd)) {
                     continue;
                 }
                 str = str.replaceFirst(mPwd, "");
-                int separatePoint = str.indexOf("/");
-                String fileName;
-                String hash = null;
-                if (-1 == separatePoint) {
-                    fileName = str;
-                    hash = mValues[i];
-                } else {
-                    fileName = str.substring(0, separatePoint);
-                }
-                if (-1 == added.indexOf(fileName)) {
-                    Item item = new Item();
-                    item.setFileName(fileName);
-                    item.setHash(hash);
-                    mItemList.add(item);
-                    added.add(fileName);
-                }
             }
-
-            System.out.println("+" + mPwd.length());
+            int separatePoint = str.indexOf("/");
+            String fileName;
+            String hash = null;
+            if (-1 == separatePoint) {
+                fileName = str;
+                hash = mValues[i];
+            } else {
+                fileName = str.substring(0, separatePoint);
+            }
+            if (-1 == added.indexOf(fileName)) {
+                Item item = new Item();
+                item.setFileName(fileName);
+                item.setHash(hash);
+                mItemList.add(item);
+                added.add(fileName);
+            }
         }
+
+        System.out.println("+" + mPwd.length());
 
         ItemAdapter adapter = new ItemAdapter(this, android.R.layout.simple_list_item_1, mItemList);
         setListAdapter(adapter);
@@ -109,8 +91,8 @@ public class TreeActivity extends ListActivity {
                     new AsyncTask<Void, Void, String>() {
                         @Override
                         protected String doInBackground(Void... params) {
-                            String result = HttpClient.request(BLOB_SHOW_API + mOwner + "/" + mName + "/"
-                                    + mValues[position], TreeActivity.this);
+                            String result = HttpClient.request(BLOB_SHOW_API + mOwner + "/" + mName
+                                    + "/" + mValues[position], TreeActivity.this);
                             String html = lyrical.highlighter.Highlighter.buildHtml(result);
                             System.out.println(html);
                             return html;
@@ -128,6 +110,5 @@ public class TreeActivity extends ListActivity {
             }
         });
     }
-
 
 }
