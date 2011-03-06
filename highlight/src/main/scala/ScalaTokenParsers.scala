@@ -18,14 +18,14 @@ object ScalaTokenParsers extends RegexParsers {
 
   def commentParser: Parser[String] = lineCommentParser | blockCommentParser
 
-  val lineComment = "//.*\n".r
+  val lineComment = "//.*(?=[\r\n]+)".r
   def lineCommentParser: Parser[String] = lineComment ^^ {
-    x => "<span class=\"comment\">" + x.takeWhile(_ != '\n').mkString + "</span><br>"
+    x => "<span class=\"comment\">" + x.takeWhile(_ != '\n').mkString + "</span>"
   }
 
-  val blockComment = """/\*.*?\*/""".r
+  val blockComment = "/\\*(?:.|\n|\r)*?\\*/".r
   def blockCommentParser: Parser[String] = blockComment ^^ {
-    x => "<span class=\"comment\">" + x.replace("\n", "<br>") + "</span>"
+    x => "<span class=\"comment\">" + x + "</span>"
   }
 
   val defKeyword = "def"

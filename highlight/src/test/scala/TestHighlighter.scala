@@ -14,7 +14,8 @@ class HighlighterTest extends FunSuite {
 
   test("line comment parser test") {
     assert(
-"""<span class="comment">// comment</span><br>Hello, World!"""
+"""<span class="comment">// comment</span>
+Hello, World!"""
       === Highlighter.highlight(
 """// comment
 Hello, World!"""
@@ -27,6 +28,20 @@ Hello, World!"""
 Hello, World!"""
       === Highlighter.highlight(
 """/* comment */
+Hello, World!"""
+      ))
+  }
+
+  test("block comment parser test with new line") {
+    assert(
+"""<span class="comment">/**
+ * comment
+ */</span>
+Hello, World!"""
+      === Highlighter.highlight(
+"""/**
+ * comment
+ */
 Hello, World!"""
       ))
   }
