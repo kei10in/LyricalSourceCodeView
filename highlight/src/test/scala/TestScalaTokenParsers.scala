@@ -13,15 +13,22 @@ class ScalaTokenParsersTest extends FunSuite {
     assert(expected === parseAll(stringLiteralParser, input).get)
   }
 
-  test("multi line chars parsing test") {
-    val input = "foo\"\"bar\"\"\""
-    val expected = "foo\"\"bar\"\"\""
-    assert(expected === parseAll(multiLineChars, input).get)
-  }
 
-  test("multi line string literal parsing test") {
+  test("multi line string literal parsing test 1") {
     val input = "\"\"\"abc\"\"\""
     val expected = "<span class=\"string\">\"\"\"abc\"\"\"</span>"
+    val actual = parseAll(stringLiteralParser, input) match {
+      case Success(x, _) => x
+      case Failure(msg, _) => msg
+      case Error(msg, _) => msg
+    }
+    assert(expected === actual)
+  }
+
+
+  test("multi line string literal parsing test 2") {
+    val input = "\"\"\"abc\"\"\"\""
+    val expected = "<span class=\"string\">\"\"\"abc\"\"\"\"</span>"
     val actual = parseAll(stringLiteralParser, input) match {
       case Success(x, _) => x
       case Failure(msg, _) => msg
