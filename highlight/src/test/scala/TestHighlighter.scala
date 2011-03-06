@@ -80,6 +80,17 @@ Hello, World!"""
   }
 
 
+  test("keyword, class parsing, but fail") {
+    val input = """classfoo {
+}
+"""
+    val expected = """classfoo {
+}
+"""
+      assert(expected === Highlighter.highlight(input))
+  }
+
+
 
 }
 

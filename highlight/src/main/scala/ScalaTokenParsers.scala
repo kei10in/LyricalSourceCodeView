@@ -34,15 +34,23 @@ object ScalaTokenParsers extends RegexParsers {
   val objectKeyword = "object"
   val classKeyword = "class"
   val traitKeyword = "trait"
-
-  def keywordParser: Parser[String] = (
-    importKeyword |
-    packageKeyword |
-    defKeyword |
-    objectKeyword |
-    classKeyword |
+  
+  val keywordList = List(
+    importKeyword,
+    packageKeyword,
+    defKeyword,
+    objectKeyword,
+    classKeyword,
     traitKeyword
-  ) ^^ {
+  )
+  val delimRegex = "(?=[ \t\r\n\f])"
+
+  def keywordParser: Parser[String] = 
+    keywordList.map(
+      (x: String) => ((x + delimRegex).r): Parser[String]
+    ).reduceLeft(
+      (x: Parser[String], y: Parser[String]) => x | y
+    ) ^^ {
     x => """<span class="keyword">""" + x + "</span>"
   }
 
